@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+
+    <style type="text/css">
+        html,body{
+            padding: 0;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        h1{
+            text-align: center;
+            font-size: 100px;
+            color: #bc2837;
+            text-shadow: #211f23 3px 3px 5px;
+        }
+
+        .content{
+            width: 960px;
+            margin: auto;
+        }
+
+        p{
+            padding: 10px;
+            font-size: 20px;
+            line-height: 40px;
+            text-align: center;
+        }
+
+        input{
+            width: 50px;
+            text-align: right;
+            font-size: 20px;
+        }
+
+        select{
+            text-align: right;
+            font-size: 20px;
+        }
+
+        #donein{
+            display: block;
+            font-size: 100px;
+            line-height: 150px;
+            text-align: center;
+            color: #bc2837;
+            text-shadow: #211f23 3px 3px 2px;
+        }
+
+        footer{
+            text-align: center;
+        }
+    </style>
+
+</head>
+<body>
+<div class="content">
+    <h1>Is It Worth The Time?</h1>
+
+    <p>
+        My days lasts <input type="number" name="days" id="days" min="1" max="24" value="24" /> hours.<br>
+        My weeks contains <input type="number" name="weekdays" id="weekdays" min="1" max="7" value="7"/> days.<br>
+        I'm doing this task <input type="number" name="timesdone" id="timesdone" min="1" value="1"/> times per
+        <select name="timesperiod" id="timesperiod">
+            <option value="1">hour</option>
+            <option value="24" selected>day</option>
+            <option value="168">week</option>
+            <option value="730">month</option>
+        </select>.<br>
+        I will do this task for the next <input type="number" name="timestodo" id="timestodo" min="1" value="1"/>
+        <select name="timestodoperiod" id="timestodoperiod">
+            <option value="1">hours</option>
+            <option value="24">days</option>
+            <option value="168">weeks</option>
+            <option value="730">months</option>
+            <option value="8760" selected>years</option>
+        </select>.<br>
+        With this new method, I should halved <input type="number" name="timehalved" id="timehalved" min="1" value="1"/>
+        <select name="periodhalved" id="periodhalved">
+            <option value="1" selected>seconds</option>
+            <option value="60">minutes</option>
+            <option value="3600">hours</option>
+            <option value="86400">days</option>
+        </select> of work each time.<br>
+    </p>
+
+    <p>
+        That means, that this script, to be worth it, should be done in less than <span id="donein"></span>
+    </p>
+
+    <footer>
+        Loosely based upon <a href="http://xkcd.com/1205/">XKCD comics #1205</a><br>
+        Created by Naouak ( <a href="https://twitter.com/Naouak">@Naouak on Twitter</a> )
+    </footer>
+</div>
+
+    <script type="text/javascript">
+        (function(){
+            function calc(){
+                var donein = document.getElementById("donein");
+
+                var days = document.getElementById("days").value;
+                var weekdays = document.getElementById("weekdays").value;
+                var timesdone = document.getElementById("timesdone").value;
+                //hour
+                var timesdoneperiod = document.getElementById("timesperiod").value;
+                if(timesdone > 24){
+                    timesdone = timesdone/24*days;
+                    if(timesdone > 24*7){
+                        timesdone = timesdone/7*weekdays;
+                    }
+                }
+                var timestodo = document.getElementById("timestodo").value;
+                //hour
+                var timestodoperiod = document.getElementById("timestodoperiod").value;
+                if(timestodoperiod > 24){
+                    timestodoperiod = timestodoperiod/24*days;
+                    if(timestodoperiod > 24*7){
+                        timestodoperiod = timestodoperiod/7*weekdays;
+                    }
+                }
+                var timehalved = document.getElementById("timehalved").value;
+                //second
+                var periodhalved = document.getElementById("periodhalved").value;
+
+
+                var doneEvery = timesdoneperiod/timesdone;
+                var timesFinallyDone = timestodo*timestodoperiod/doneEvery;
+
+                var timeFinallyHalved = timehalved*periodhalved*timesFinallyDone;
+
+
+                donein.innerHTML = "";
+                var seconds = timeFinallyHalved%60;
+                timeFinallyHalved-=seconds;
+                timeFinallyHalved/=60;
+                var minutes = timeFinallyHalved%60;
+                timeFinallyHalved-=minutes;
+                timeFinallyHalved/=60;
+                var hours = timeFinallyHalved%24;
+                timeFinallyHalved-=hours;
+                timeFinallyHalved/=24;
+                var days = timeFinallyHalved%30;
+                timeFinallyHalved-=days;
+                var months = timeFinallyHalved/30;
+
+                if(months > 0){
+                    donein.innerHTML += " "+months+" months";
+                }
+                if(days > 0){
+                    donein.innerHTML += " "+days+" days";
+                }
+                if(hours > 0){
+                    donein.innerHTML += " "+hours+" h";
+                }
+                if(minutes > 0){
+                    donein.innerHTML += " "+minutes+" min";
+                }
+                if(seconds > 0){
+                    donein.innerHTML += " "+Math.floor(seconds)+" sec";
+                }
+            };
+
+
+
+            var inputs = document.querySelectorAll("input, select");
+
+            for(var i = 0; i< inputs.length; i++){
+                inputs[i].addEventListener("change",calc)
+            }
+
+            calc();
+        })();
+    </script>
+</body>
+</html>
